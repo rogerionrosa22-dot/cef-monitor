@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agente CEF — Painel</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0D1117;--surface:#161B22;--surface2:#1C2333;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);--accent:#F0B429;--accent2:#00B4D8;--green:#3FB950;--red:#F85149;--text:#E6EDF3;--muted:#8B949E;--mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--display:'Bebas Neue',sans-serif}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh}
+  body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:999}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+  .logo{display:flex;align-items:baseline;gap:10px}
+  .logo-title{font-family:var(--display);font-size:20px;letter-spacing:2px;color:var(--accent)}
+  .logo-sub{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+  .auto-badge{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3);border-radius:4px;padding:2px 8px;font-family:var(--mono);font-size:10px;margin-left:8px}
+  .status-pill{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border);border-radius:99px;padding:5px 12px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0}
+  .dot.ok{background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 1.5s infinite}
+  .dot.loading{background:var(--accent);box-shadow:0 0 6px var(--accent);animation:pulse .8s infinite}
+  .dot.err{background:var(--red)}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .main{max-width:700px;margin:0 auto;padding:22px 20px 80px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px}
+  .section-label{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+  .cfg{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px}
+  .cfg-k{font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px}
+  .cfg-v{font-size:13px;font-weight:500;color:var(--accent)}
+  .cfg-v.green{color:var(--green)}
+  .city-tags{display:flex;flex-wrap:wrap;gap:7px}
+  .city-tag{display:flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-family:var(--mono);font-size:11px}
+  .city-dot{width:6px;height:6px;border-radius:50%;background:var(--accent2)}
+  .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .loading-state{text-align:center;padding:50px 20px;color:var(--muted);font-family:var(--mono);font-size:13px}
+  .results-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .r-count{font-family:var(--display);font-size:26px;color:var(--accent);letter-spacing:2px}
+  .r-count span{font-size:13px;color:var(--muted);font-family:var(--sans);font-weight:400;letter-spacing:0;margin-left:6px}
+  .novo-badge{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3);border-radius:4px;padding:3px 9px;font-family:var(--mono);font-size:11px;font-weight:600}
+  .icard{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:12px;padding:15px;margin-bottom:10px;animation:si .3s ease}
+  .icard.novo{border-left-color:var(--green)}
+  @keyframes si{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .icard-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+  .icard-tipo{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+  .icard-end{font-size:14px;font-weight:500;line-height:1.4}
+  .icard-city{font-size:12px;color:var(--muted);margin-top:2px}
+  .icard-val{text-align:right;flex-shrink:0}
+  .val-num{font-family:var(--display);font-size:20px;color:var(--accent);letter-spacing:1px;white-space:nowrap}
+  .desc-badge{display:inline-block;background:rgba(63,185,80,.12);color:var(--green);border:1px solid rgba(63,185,80,.25);border-radius:4px;padding:2px 7px;font-family:var(--mono);font-size:10px;margin-top:4px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px}
+  .tag{padding:3px 8px;border-radius:5px;font-family:var(--mono);font-size:10px;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+  .tag.g{background:rgba(63,185,80,.1);color:var(--green);border-color:rgba(63,185,80,.2)}
+  .tag.b{background:rgba(0,180,216,.1);color:var(--accent2);border-color:rgba(0,180,216,.2)}
+  .tag.y{background:rgba(240,180,41,.1);color:var(--accent);border-color:rgba(240,180,41,.2)}
+  .btn-link{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:12px;font-family:var(--mono);text-decoration:none;transition:all .2s}
+  .btn-link:hover{border-color:var(--border2)}
+  .btn-wpp{width:100%;padding:13px;background:#25D366;color:#fff;border:none;border-radius:10px;font-family:var(--display);font-size:17px;letter-spacing:3px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:14px}
+  .btn-wpp:hover{background:#1EBA5B;transform:translateY(-1px)}
+  .btn-wpp:disabled{background:var(--surface2);color:var(--muted);cursor:not-allowed;transform:none}
+  .empty{text-align:center;padding:36px 20px;color:var(--muted);font-family:var(--mono);font-size:12px}
+  .ts-bar{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:14px}
+  ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">
+    <span class="logo-title">AGENTE CEF</span>
+    <span class="logo-sub">Automático</span>
+    <span class="auto-badge">⚡ GitHub Actions</span>
+  </div>
+  <div class="status-pill">
+    <div class="dot loading" id="dot"></div>
+    <span id="statusTxt">Carregando...</span>
+  </div>
+</header>
+
+<div class="main">
+
+  <div class="card">
+    <div class="section-label">Filtros ativos</div>
+    <div class="grid2">
+      <div class="cfg"><div class="cfg-k">Tipo</div><div class="cfg-v">Casa · Apartamento</div></div>
+      <div class="cfg"><div class="cfg-k">Valor máximo</div><div class="cfg-v">R$ 150.000</div></div>
+      <div class="cfg"><div class="cfg-k">Atualização</div><div class="cfg-v green">⚡ Automática 7h</div></div>
+      <div class="cfg"><div class="cfg-k">Fonte</div><div class="cfg-v">CSV Caixa SP</div></div>
+    </div>
+    <div class="section-label" style="margin-bottom:8px">Cidades monitoradas</div>
+    <div class="city-tags">
+      <div class="city-tag"><div class="city-dot"></div>Cerquilho</div>
+      <div class="city-tag"><div class="city-dot"></div>Boituva</div>
+      <div class="city-tag"><div class="city-dot"></div>Tietê</div>
+    </div>
+  </div>
+
+  <!-- Timestamp -->
+  <div class="ts-bar">
+    <span>Última atualização: <strong id="tsVal">carregando...</strong></span>
+    <span id="totalCsv"></span>
+  </div>
+
+  <!-- Resultados -->
+  <div id="loadingState" class="loading-state">
+    <div class="spinner" style="margin:0 auto 14px"></div>
+    Carregando dados da Caixa...
+  </div>
+
+  <div id="resultsSection" style="display:none">
+    <div class="results-hdr">
+      <div class="r-count" id="rCount">0 <span>imóveis</span></div>
+      <div class="novo-badge" id="novoBadge" style="display:none"></div>
+    </div>
+    <div id="resultsContainer"></div>
+    <button class="btn-wpp" id="btnWpp" onclick="enviarWpp()" disabled>
+      <span>📲</span> ENVIAR RESUMO NO WHATSAPP
+    </button>
+  </div>
+
+</div>
+
+<script>
+const fmtVal = v => 'R$ ' + Number(v).toLocaleString('pt-BR', {minimumFractionDigits:0});
+
+// ── CARREGAR JSON gerado pelo GitHub Actions ──────────────────────────────────
+async function carregar() {
+  try {
+    // Cache-bust para sempre pegar a versão mais recente
+    const url = `imoveis.json?t=${Date.now()}`;
+    const r   = await fetch(url);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    renderizar(data);
+  } catch(e) {
+    document.getElementById('loadingState').innerHTML =
+      `<div style="color:var(--red);font-family:var(--mono);font-size:12px">
+        ⚠ Não foi possível carregar os dados.<br><br>
+        Certifique-se de que o GitHub Actions já executou ao menos uma vez<br>
+        e que o GitHub Pages está ativado neste repositório.<br><br>
+        <span style="color:var(--muted)">${e.message}</span>
+      </div>`;
+    document.getElementById('dot').className = 'dot err';
+    document.getElementById('statusTxt').textContent = 'Erro ao carregar';
+  }
+}
+
+function renderizar(data) {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('resultsSection').style.display = 'block';
+  document.getElementById('dot').className = 'dot ok';
+  document.getElementById('statusTxt').textContent = 'Dados atualizados';
+  document.getElementById('tsVal').textContent = data.gerado_em || '—';
+  document.getElementById('totalCsv').textContent = `${data.total} imóvel(is) encontrado(s)`;
+
+  const nb = document.getElementById('novoBadge');
+  if (data.novos > 0) {
+    nb.style.display = 'inline-block';
+    nb.textContent = `+${data.novos} NOVO${data.novos > 1 ? 'S' : ''}`;
+  }
+
+  document.getElementById('rCount').innerHTML =
+    `${data.total} <span>imóveis encontrados</span>`;
+
+  const cnt = document.getElementById('resultsContainer');
+  cnt.innerHTML = '';
+
+  if (!data.imoveis || data.imoveis.length === 0) {
+    cnt.innerHTML = '<div class="empty">Nenhum imóvel encontrado com os filtros atuais.</div>';
+    return;
+  }
+
+  const novos_ids = new Set(data.novos_ids || []);
+
+  // Ordenar: novos primeiro, depois menor preço
+  const lista = [...data.imoveis].sort((a, b) => {
+    const an = novos_ids.has(a.id), bn = novos_ids.has(b.id);
+    if (an && !bn) return -1;
+    if (!an && bn) return  1;
+    return a.preco - b.preco;
+  });
+
+  lista.forEach(im => {
+    const novo = novos_ids.has(im.id);
+    const d = document.createElement('div');
+    d.className = `icard ${novo ? 'novo' : ''}`;
+    d.innerHTML = `
+      <div class="icard-top">
+        <div>
+          <div class="icard-tipo">${im.tipo} · ${im.modalidade || '—'}</div>
+          <div class="icard-end">${im.endereco || '(Ver edital)'}</div>
+          <div class="icard-city">${im.bairro ? im.bairro + ' — ' : ''}${im.cidade}/SP</div>
+        </div>
+        <div class="icard-val">
+          <div class="val-num">${fmtVal(im.preco)}</div>
+          ${im.desconto > 0 ? `<div class="desc-badge">-${im.desconto}% desc.</div>` : ''}
+        </div>
+      </div>
+      <div class="tags">
+        ${novo ? '<span class="tag g">🟢 NOVO</span>' : ''}
+        <span class="tag g">✓ Financiamento</span>
+        ${im.fgts ? '<span class="tag b">✓ FGTS</span>' : ''}
+        ${im.quartos && im.quartos !== 'nan' ? `<span class="tag">${im.quartos} quartos</span>` : ''}
+        ${im.area    && im.area    !== 'nan' ? `<span class="tag">${im.area}m²</span>` : ''}
+        ${im.avaliacao > im.preco ? `<span class="tag y">Avaliado ${fmtVal(im.avaliacao)}</span>` : ''}
+      </div>
+      <a class="btn-link" href="${im.link}" target="_blank">📄 Ver edital Caixa ↗</a>
+    `;
+    cnt.appendChild(d);
+  });
+
+  window._dados = data;
+  document.getElementById('btnWpp').disabled = false;
+}
+
+// ── WHATSAPP ──────────────────────────────────────────────────────────────────
+function enviarWpp() {
+  const data = window._dados;
+  if (!data) return;
+  const novos_ids = new Set(data.novos_ids || []);
+  const novos     = data.imoveis.filter(i => novos_ids.has(i.id));
+  const dt        = data.gerado_em;
+
+  let msg = `🏠 *AGENTE IMÓVEIS CAIXA*\n📅 ${dt}\n📍 Cerquilho · Boituva · Tietê\n\n`;
+
+  if (novos.length > 0) {
+    msg += `🔔 *${novos.length} NOVO(S) IMÓVEL(IS):*\n\n`;
+    novos.forEach(im => {
+      msg += `✅ *${im.tipo} — ${im.cidade}/SP*\n`;
+      msg += `📍 ${im.endereco || 'Ver edital'}\n`;
+      msg += `💰 ${fmtVal(im.preco)}${im.desconto > 0 ? ` (-${im.desconto}%)` : ''}\n`;
+      msg += `✓ Financiamento${im.fgts ? ' · ✓ FGTS' : ''}\n`;
+      msg += `🔗 ${im.link}\n\n`;
+    });
+  } else {
+    msg += `_Sem novidades hoje._\n\n`;
+    data.imoveis.forEach(im => {
+      msg += `• ${im.tipo} em ${im.cidade} — ${fmtVal(im.preco)}\n`;
+    });
+  }
+  msg += `\n📊 Total: ${data.total} imóveis | _Agente CEF automático_`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+carregar();
+</script>
+</body>
+</html>
