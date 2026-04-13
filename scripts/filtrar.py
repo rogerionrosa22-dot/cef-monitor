@@ -14,7 +14,7 @@ from io import StringIO
 # ── CONFIG ─────────────────────────────────────────────────────────────────────
 CIDADES    = ['CERQUILHO', 'BOITUVA', 'TIETE', 'TIETÊ']
 TIPOS      = ['CASA', 'APARTAMENTO', 'APTO']
-VALOR_MAX  = 150_000
+VALOR_MAX  = 200_000
 CSV_URL    = 'https://venda-imoveis.caixa.gov.br/listaweb/Lista_imoveis_SP.csv'
 OUT_JSON   = 'docs/imoveis.json'
 OUT_TS     = 'docs/ultima_execucao.txt'
