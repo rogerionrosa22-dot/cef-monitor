@@ -6,6 +6,7 @@ e salva o resultado em docs/imoveis.json para ser exibido no painel web.
 
 import os
 import json
+import unicodedata
 import requests
 import pandas as pd
 from datetime import datetime
@@ -85,19 +86,25 @@ def processar(raw: str) -> list[dict]:
     C_ID      = col('N_IMOVEL', ['IMOVEL', 'ID', 'COD'])
 
     imoveis = []
+    # BUG 3 CORRIGIDO: abrir o log uma vez fora do loop
+    os.makedirs('docs', exist_ok=True)
+    log_file = open('docs/debug.log', 'a', encoding='utf-8')
+
     for _, row in df.iterrows():
         def g(c):
             return str(row[c]).strip() if c and c in df.columns else ''
 
         cidade_raw = g(C_CIDADE)
+        # BUG 1 CORRIGIDO: NFD antes do encode para Ê→E, Ã→A, etc.
         cidade_norm = (
-            cidade_raw.upper()
-            .encode('ascii', errors='ignore').decode()
-            .replace('TIETE', 'TIETE')
+            unicodedata.normalize('NFD', cidade_raw.upper())
+            .encode('ascii', errors='ignore')
+            .decode()
+            .strip()
         )
 
-        # Filtro cidade
-        if cidade_norm not in ['CERQUILHO', 'BOITUVA', 'TIETE']:
+        # BUG 2 CORRIGIDO: any() para tolerar espaços extras e variações
+        if not any(c in cidade_norm for c in ['CERQUILHO', 'BOITUVA', 'TIETE']):
             continue
 
         # Filtro tipo
@@ -122,9 +129,7 @@ def processar(raw: str) -> list[dict]:
             
         debug_msg = f"[{ts()}] DEBUG: {cidade_raw} | {tipo_raw} | R${preco} | Financiamento: {financ}"
         print(debug_msg)
-        # Opcionalmente, salvar em arquivo:
-        with open('docs/debug.log', 'a', encoding='utf-8') as log:
-            log.write(debug_msg + '\n')
+        log_file.write(debug_msg + '\n')
     
         # Avaliação e desconto
         aval_raw = g(C_AVAL).replace('.', '').replace(',', '.').strip()
@@ -165,6 +170,7 @@ def processar(raw: str) -> list[dict]:
             'link':      link,
         })
 
+    log_file.close()
     return imoveis
 
 # ── DETECTAR NOVOS ─────────────────────────────────────────────────────────────
