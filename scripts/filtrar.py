@@ -12,7 +12,7 @@ from datetime import datetime
 from io import StringIO
 
 # ── CONFIG ─────────────────────────────────────────────────────────────────────
-CIDADES    = ['CERQUILHO', 'BOITUVA', 'TIETE', 'TIETÊ', 'SAO PAULO']
+CIDADES    = ['CERQUILHO', 'BOITUVA', 'TIETE', 'TIETÊ']
 TIPOS      = ['CASA', 'APARTAMENTO', 'APTO']
 VALOR_MAX  = 200_000
 CSV_URL    = 'https://venda-imoveis.caixa.gov.br/listaweb/Lista_imoveis_SP.csv'
@@ -96,7 +96,7 @@ def processar(raw: str) -> list[dict]:
         )
 
         # Filtro cidade
-        if not any(c in cidade_norm for c in ['CERQUILHO', 'BOITUVA', 'TIETE', 'SAO PAULO']):
+        if not any(c in cidade_norm for c in ['CERQUILHO', 'BOITUVA', 'TIETE']):
             continue
 
         # Filtro tipo
