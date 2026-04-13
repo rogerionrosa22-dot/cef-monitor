@@ -119,8 +119,13 @@ def processar(raw: str) -> list[dict]:
             continue
         if preco <= 0 or preco > VALOR_MAX:
             continue
-        print(f"[{ts()}] DEBUG: {cidade_raw} | {tipo_raw} | R${preco} | Financiamento: {financ}") #opção para depurar o erro
-        
+            
+        debug_msg = f"[{ts()}] DEBUG: {cidade_raw} | {tipo_raw} | R${preco} | Financiamento: {financ}" 
+        print(debug_msg)
+        # Opcionalmente, salvar em arquivo:
+        with open('docs/debug.log', 'a', encoding='utf-8') as log:
+        log.write(debug_msg + '\n')
+    
         # Avaliação e desconto
         aval_raw = g(C_AVAL).replace('.', '').replace(',', '.').strip()
         try:
