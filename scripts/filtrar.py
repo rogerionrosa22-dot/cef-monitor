@@ -180,7 +180,7 @@ def detectar_novos(imoveis: list[dict]) -> list[dict]:
 # ── SALVAR ─────────────────────────────────────────────────────────────────────
 def salvar(imoveis: list[dict], novos: list[dict]):
     os.makedirs('docs', exist_ok=True)
-    agora = datetime.now().strftime('%d/%m/%Y %H:%M')
+    agora = datetime.now(ZoneInfo('America/Sao_Paulo')).strftime('%d/%m/%Y %H:%M')
 
     payload = {
         'gerado_em':    agora,
@@ -210,7 +210,7 @@ def fmt_val(v):
     return f"R$ {v:,.0f}".replace(',', '.')
 
 def ts():
-    return datetime.now().strftime('%H:%M:%S')
+    return datetime.now(ZoneInfo('America/Sao_Paulo')).strftime('%H:%M:%S')
 
 # ── MAIN ───────────────────────────────────────────────────────────────────────
 if __name__ == '__main__':
