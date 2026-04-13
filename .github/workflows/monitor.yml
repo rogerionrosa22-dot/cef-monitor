@@ -5,6 +5,9 @@ on:
     - cron: '0 10 * * *'   # Diariamente às 7h BRT (10h UTC)
   workflow_dispatch:         # Permite execução manual no GitHub
 
+permissions:
+  contents: write            # Allow writing to the repository
+  
 jobs:
   monitorar:
     runs-on: ubuntu-latest
