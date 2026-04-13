@@ -134,12 +134,12 @@ def processar(raw: str) -> list[dict]:
             continue
 
         # FILTRO 3: FINANCIAMENTO
-        financ_raw  = g(C_FINANC)
-        financ_norm = remover_acentos(financ_raw.upper())
+        #financ_raw  = g(C_FINANC)
+        #financ_norm = remover_acentos(financ_raw.upper())
         # CORRIGIDO: bloqueia só quando explicitamente NAO sem SIM junto
-        if 'NAO' in financ_norm and 'SIM' not in financ_norm:
-            descartados.append(f"FINANC | {cidade_raw} | financ='{financ_raw}'")
-            continue
+        #if 'NAO' in financ_norm and 'SIM' not in financ_norm:
+        #    descartados.append(f"FINANC | {cidade_raw} | financ='{financ_raw}'")
+        #    continue
 
         # FILTRO 4: VALOR
         preco_raw = g(C_PRECO).replace('.', '').replace(',', '.').strip()
