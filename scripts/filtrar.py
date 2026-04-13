@@ -119,7 +119,8 @@ def processar(raw: str) -> list[dict]:
             continue
         if preco <= 0 or preco > VALOR_MAX:
             continue
-
+        print(f"[{ts()}] DEBUG: {cidade_raw} | {tipo_raw} | R${preco} | Financiamento: {financ}") #opção para depurar o erro
+        
         # Avaliação e desconto
         aval_raw = g(C_AVAL).replace('.', '').replace(',', '.').strip()
         try:
