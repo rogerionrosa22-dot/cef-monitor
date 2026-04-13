@@ -27,13 +27,13 @@ jobs:
 
       - name: Salvar resultados no repositório
         run: |
-        git config user.name  "Agente CEF"
-        git config user.email "agente@cef-monitor"
-        git config --global credential.helper store
-        echo "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com" > ~/.git-credentials
-        git add docs/imoveis.json docs/ultima_execucao.txt 2>/dev/null || true
-        git diff --cached --quiet || git commit -m "🏠 Atualização $(date +'%d/%m/%Y %H:%M BRT')"
-        git push
+          git config user.name  "Agente CEF"
+          git config user.email "agente@cef-monitor"
+          git config --global credential.helper store
+          echo "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com" > ~/.git-credentials
+          git add docs/imoveis.json docs/ultima_execucao.txt 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "🏠 Atualização $(date +'%d/%m/%Y %H:%M BRT')"
+          git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
