@@ -96,7 +96,7 @@ def processar(raw: str) -> list[dict]:
         )
 
         # Filtro cidade
-        if not any(c in cidade_norm for c in ['CERQUILHO', 'BOITUVA', 'TIETE']):
+        if cidade_norm not in ['CERQUILHO', 'BOITUVA', 'TIETE']:
             continue
 
         # Filtro tipo
