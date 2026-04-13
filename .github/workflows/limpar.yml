@@ -1,0 +1,34 @@
+name: 🧹 Limpar Dados de Execução
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  limpar:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+      
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Executar limpeza
+        run: python scripts/limpar.py
+      
+      - name: Fazer commit
+        run: |
+          git config user.name "🤖 Agente CEF"
+          git config user.email "agente@cef-monitor"
+          git add docs/imoveis.json docs/ultima_execucao.txt 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "🧹 Dados resetados"
+          git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
