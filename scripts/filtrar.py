@@ -59,8 +59,13 @@ def baixar_csv():
 # ── PARSE E FILTRO ─────────────────────────────────────────────────────────────
 def processar(raw: str) -> list[dict]:
 
-    sep = ';' if ';' in raw.split('\n')[0] else ','
-    df  = pd.read_csv(StringIO(raw), sep=sep, dtype=str, on_bad_lines='skip')
+    # BUG 1 CORRIGIDO: linha 0 é vazia — usar primeira linha não-vazia
+    primeira_linha = next(l for l in raw.split('\n') if l.strip())
+    sep = ';' if ';' in primeira_linha else ','
+
+    # BUG 2 CORRIGIDO: CSV tem 2 cabeçalhos — skiprows=1 pula o título
+    df  = pd.read_csv(StringIO(raw), sep=sep, dtype=str,
+                      on_bad_lines='skip', skiprows=1, header=1)
 
     print(f"[{ts()}] Colunas originais: {list(df.columns)}")
     print(f"[{ts()}] Total de linhas no CSV: {len(df):,}")
@@ -156,7 +161,7 @@ def processar(raw: str) -> list[dict]:
         # PASSOU EM TODOS OS FILTROS
         debug_msg = (
             f"[{ts()}] OK | {cidade_raw} | {tipo_col} | "
-            f"{fmt_val(preco)} | financ='{financ_raw}'"
+            f"{fmt_val(preco)}"
         )
         print(debug_msg)
 
