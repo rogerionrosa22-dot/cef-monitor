@@ -282,4 +282,4 @@ if __name__ == '__main__':
     salvar(imoveis, novos)
     print(f"[{ts()}] === Concluído: {len(imoveis)} imóveis, {len(novos)} novos ===")
 
-    
+  
