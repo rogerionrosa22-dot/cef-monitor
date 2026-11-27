@@ -1,7 +1,47 @@
 {
-  "gerado_em": "25/11/2026 16:49",
-  "total": 0,
-  "novos": 0,
-  "novos_ids": [],
-  "imoveis": []
+  "gerado_em": "27/11/2026 16:23",
+  "total": 2,
+  "novos": 2,
+  "novos_ids": [
+    "8444424534240",
+    "8444430583606"
+  ],
+  "imoveis": [
+    {
+      "id": "8444424534240",
+      "tipo": "Apartamento",
+      "endereco": "RUA MOACIR AMADEI, N. 40, Apto 04, PAVIMENTO SUPERIOR",
+      "bairro": "RESIDENCIAL AGUA BRANCA",
+      "cidade": "BOITUVA",
+      "uf": "SP",
+      "preco": 168721.98,
+      "avaliacao": 158000.0,
+      "desconto": 0,
+      "financiamento": "Não",
+      "modalidade": "Leilão SFI - Edital Único",
+      "area_total": "65.63 m²",
+      "area_privativa": "49.06 m²",
+      "quartos": "1",
+      "descricao": "Apartamento, 65.63 de área total, 49.06 de área privativa, 0.00 de área do terreno,  1 qto(s), a.serv, WC, 1 sala(s), cozinha, 1 vaga(s) de garagem.",
+      "link": "https://venda-imoveis.caixa.gov.br/sistema/detalhe-imovel.asp?hdnimovel=8444424534240"
+    },
+    {
+      "id": "8444430583606",
+      "tipo": "Casa",
+      "endereco": "AVENIDA SALVADOR THOME, N. 96, LT 9 QD C",
+      "bairro": "CONJUNTO RESIDENCIAL SEGURA GARCIA",
+      "cidade": "IGARACU DO TIETE",
+      "uf": "SP",
+      "preco": 106667.03,
+      "avaliacao": 180000.0,
+      "desconto": 41,
+      "financiamento": "Não",
+      "modalidade": "Licitação Aberta",
+      "area_total": "85.53 m²",
+      "area_privativa": "85.53 m²",
+      "quartos": "2",
+      "descricao": "Casa, 85.53 de área total, 85.53 de área privativa, 137.10 de área do terreno,  2 qto(s), a.serv, WC, 1 sala(s), cozinha, 1 vaga(s) de garagem.",
+      "link": "https://venda-imoveis.caixa.gov.br/sistema/detalhe-imovel.asp?hdnimovel=8444430583606"
+    }
+  ]
 }
